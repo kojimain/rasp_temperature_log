@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "dateformat": "^3.0.3",
     "googleapis": "^36.0.0"
   }
 }
