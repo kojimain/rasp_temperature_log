@@ -21,12 +21,13 @@ const sheets = google.sheets({
   version: 'v4',
   auth: jwtClient
 })
+const execSync = require('child_process').execSync
 
 // functions
-// ダミーのCPU温度取得処理
+// CPU温度取得処理
 const fetchTemperature = function() {
-  const array = [41.0, 41.5, 42.0]
-  return array[Math.floor(Math.random() * array.length)]
+  const cmd = 'vcgencmd measure_temp | sed -e "s/temp=//" | sed -e "s/\'C//"'
+  return parseFloat(execSync(cmd).toString())
 }
 // ログ追加処理
 const appendRow = function() {
@@ -50,9 +51,9 @@ const rotateRows = function() {
     spreadsheetId,
     range: 'Sheet1!A:B'
   }).then(response => {
-    // 15行以上を削除
+    // 60行以上を削除
     const rowsCount = response.data.values.length
-    const deleteRowsCount = rowsCount - 15
+    const deleteRowsCount = rowsCount - 60
     if (deleteRowsCount > 0) {
       sheets.spreadsheets.batchUpdate({
         spreadsheetId,
@@ -79,5 +80,5 @@ jwtClient.authorize(function(err, tokens) {
   setInterval(async function() {
     await appendRow()
     rotateRows()
-  }, 5000)
+  }, 60000)
 })
