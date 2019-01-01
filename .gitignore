@@ -82,3 +82,8 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+# --- custom ----------//
+credentials/*
+!credentials/.keep
+# //--- custom ----------
