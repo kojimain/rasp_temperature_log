@@ -44,10 +44,40 @@ const appendRow = function() {
     }
   })
 }
+// ログローテート処理
+const rotateRows = function() {
+  sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: 'Sheet1!A:B'
+  }).then(response => {
+    // 15行以上を削除
+    const rowsCount = response.data.values.length
+    const deleteRowsCount = rowsCount - 15
+    if (deleteRowsCount > 0) {
+      sheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        resource: {
+          requests: [
+            {
+              deleteDimension: {
+                range: {
+                  dimension: "ROWS",
+                  startIndex: 0,
+                  endIndex: deleteRowsCount
+                }
+              }
+            }
+          ]
+        }
+      })
+    }
+  })
+}
 
 // main
 jwtClient.authorize(function(err, tokens) {
-  setInterval(function() {
-    appendRow()
+  setInterval(async function() {
+    await appendRow()
+    rotateRows()
   }, 5000)
 })
